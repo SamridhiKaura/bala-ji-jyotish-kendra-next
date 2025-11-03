@@ -130,7 +130,7 @@ export default function Home() {
               <div className="badge">
                 <span className="badge-title">Experienced</span>
                 <span className="badge-label">
-                  Vedic Astrologer in Chandigarh*
+                  Vedic Astrologer in Chandigarh
                 </span>
               </div>
               <div className="badge">
