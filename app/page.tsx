@@ -1,10 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 
 export default function Home() {
   const [navOpen, setNavOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null);
   const year = new Date().getFullYear();
+
+  const handleContactSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setSubmitMessage(null);
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    // Convert FormData to x-www-form-urlencoded body
+    const entries = Array.from(formData.entries()).map(([key, value]) => [
+      key,
+      String(value),
+    ]);
+    const body = new URLSearchParams(entries).toString();
+
+    try {
+      const response = await fetch('/__forms.html', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      });
+
+      if (response.ok) {
+        setSubmitMessage(
+          'Thank you. Your details have been received. You will be contacted shortly.'
+        );
+        form.reset();
+      } else {
+        setSubmitMessage(
+          'Something went wrong. Please try again or contact us on Phone / WhatsApp.'
+        );
+      }
+    } catch (error) {
+      setSubmitMessage(
+        'Something went wrong. Please try again or contact us on Phone / WhatsApp.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <>
@@ -14,8 +57,7 @@ export default function Home() {
           <a href="#top" className="logo">
             <span className="logo-mark">ॐ</span>
             <span className="logo-text">
-              Bala Ji Jyotish Kendra{' '}
-              <strong>| Astrologer GN Swami</strong>
+              Bala Ji Jyotish Kendra <strong>| Astrologer GN Swami</strong>
             </span>
           </a>
 
@@ -29,7 +71,6 @@ export default function Home() {
 
           <button
             className="nav-toggle"
-            id="navToggle"
             aria-label="Toggle navigation"
             onClick={() => setNavOpen((prev) => !prev)}
           >
@@ -59,8 +100,7 @@ export default function Home() {
               Vedic Astrology • Spiritual Guidance • Remedies
             </p>
             <h1>
-              Get{' '}
-              <span className="highlight">Instant Guidance</span>
+              Get <span className="highlight">Instant Guidance</span>
               <br />
               for Love, Marriage &amp; Life Problems
             </h1>
@@ -178,7 +218,7 @@ export default function Home() {
             <article className="service-card">
               <div className="service-image">
                 <img
-                  src="/img/lp.jpg"
+                  src="/img/whatsapp-contact.jpg"
                   alt="Love marriage problem solution banner"
                 />
               </div>
@@ -202,7 +242,7 @@ export default function Home() {
             <article className="service-card">
               <div className="service-image">
                 <img
-                  src="/img/whatsapp-contact.jpg"
+                  src="/img/lp.jpg"
                   alt="Numerology and number 1 importance"
                 />
               </div>
@@ -222,7 +262,7 @@ export default function Home() {
             {/* Card 4 */}
             <article className="service-card">
               <div className="service-image">
-                <img src="/img/b.WEBP" alt="Husband-Wife Dispute" />
+                <img src="/img/b.WEBP" alt="Puja and bhog arrangement" />
               </div>
               <h3>Husband-Wife Dispute &amp; Family Problems</h3>
               <p>
@@ -285,7 +325,7 @@ export default function Home() {
               <p>Traditional wisdom with a modern, practical approach.</p>
             </header>
             <p>
-              <strong>Bala Ji Jyotish Kendra</strong> in Chandigarh is led by
+              <strong>Bala Ji Jyotish Kendra</strong> in Mohali is led by
               Astrologer <strong>GN Swami</strong>, a devoted Vedic astrologer
               and spiritual guide helping people overcome challenges in love,
               marriage, career, finances and family life. Combining astrology,
@@ -327,21 +367,15 @@ export default function Home() {
           <div className="about-side">
             <div className="trophy-grid">
               <figure className="trophy-card">
-                <img
-                  src="/img/trophy-1.jpg"
-                  alt="Astrology award trophy 1"
-                />
+                <img src="/img/trophy-1.jpg" alt="Astrology award trophy 1" />
                 <figcaption>
                   Honoured for contribution in Jyotish &amp; spiritual services.
                 </figcaption>
               </figure>
               <figure className="trophy-card">
-                <img
-                  src="/img/trophy-2.jpg"
-                  alt="Astrology award trophy 2"
-                />
+                <img src="/img/trophy-2.jpg" alt="Astrology award trophy 2" />
                 <figcaption>
-                  Recognised at Vedic Astrology and Palm Reading.
+                  Recognised at Vedic Astrology Sammelan* (example text).
                 </figcaption>
               </figure>
             </div>
@@ -431,19 +465,19 @@ export default function Home() {
             </figure>
             <figure className="gallery-item">
               <img
-                src="/img/kundli-chart.webp"
+                src="/img/numerology.jpg"
                 alt="Numerology numbers and chart"
               />
             </figure>
             <figure className="gallery-item">
               <img
-                src="/img/trophy-1.jpg"
+                src="/img/cakar.jpg"
                 alt="Palmistry and hand reading"
               />
             </figure>
             <figure className="gallery-item">
               <img
-                src="/img/trophy-2.jpg"
+                src="/img/havan.jpg"
                 alt="Numerology numbers and chart"
               />
             </figure>
@@ -457,9 +491,7 @@ export default function Home() {
           <div className="contact-text">
             <header className="section-header left">
               <h2>Contact &amp; Appointment</h2>
-              <p>
-                Call or message now to discuss your problem in full privacy.
-              </p>
+              <p>Call or message now to discuss your problem in full privacy.</p>
             </header>
 
             <div className="contact-options">
@@ -509,28 +541,8 @@ export default function Home() {
           </div>
 
           <div className="contact-form-wrapper">
-            <form
-  name="contact"
-  method="POST"
-  data-netlify="true"
-  data-netlify-honeypot="bot-field"
-  className="contact-form"
->
-  {/* Hidden input so Netlify knows the form name */}
-  <input type="hidden" name="form-name" value="contact" />
-
-  {/* Honeypot field for spam protection (hidden from real users) */}
-  <p style={{ display: 'none' }}>
-    <label>
-      Don’t fill this out if you’re human: <input name="bot-field" />
-    </label>
-  </p>
-
-              <h3>Book a Consultation</h3>
-              <p>
-                Fill this form and you&apos;ll receive a call / message for
-                confirmation.
-              </p>
+            <form className="contact-form" onSubmit={handleContactSubmit}>
+              <input type="hidden" name="form-name" value="contact" />
 
               <div className="form-field">
                 <label htmlFor="name">Full Name*</label>
@@ -540,7 +552,12 @@ export default function Home() {
               <div className="form-grid">
                 <div className="form-field">
                   <label htmlFor="dob">Date of Birth*</label>
-                  <input type="date" id="dob" name="Date of Birth" required />
+                  <input
+                    type="date"
+                    id="dob"
+                    name="Date of Birth"
+                    required
+                  />
                 </div>
                 <div className="form-field">
                   <label htmlFor="tob">Time of Birth</label>
@@ -592,22 +609,30 @@ export default function Home() {
 
               <div className="form-field">
                 <label htmlFor="message">Describe Your Problem*</label>
-                <textarea
-                  id="message"
-                  name="Message"
-                  rows={4}
-                  required
-                ></textarea>
+                <textarea id="message" name="Message" rows={4} required />
               </div>
 
-              <button type="submit" className="btn btn-primary btn-block">
-                Submit Details
+              <button
+                type="submit"
+                className="btn btn-primary btn-block"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Details'}
               </button>
 
               <p className="form-footnote">
-                By submitting, you agree to be contacted via Phone / WhatsApp
+                By submitting, you agree to be contacted via phone / WhatsApp
                 for consultation scheduling.
               </p>
+
+              {submitMessage && (
+                <p
+                  className="form-footnote"
+                  style={{ marginTop: '0.4rem' }}
+                >
+                  {submitMessage}
+                </p>
+              )}
             </form>
           </div>
         </div>
@@ -618,8 +643,7 @@ export default function Home() {
         <div className="container footer-grid">
           <div>
             <p className="footer-brand">
-              Bala Ji Jyotish Kendra |{' '}
-              <strong>Astrologer GN Swami</strong>
+              Bala Ji Jyotish Kendra | <strong>Astrologer GN Swami</strong>
             </p>
             <p className="footer-text">
               Vedic astrology, numerology, vastu and spiritual counselling for
