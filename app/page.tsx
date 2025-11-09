@@ -78,8 +78,8 @@ export default function Home() {
             <span />
           </button>
 
-          <a href="tel:+919478566963" className="btn btn-small btn-outline">
-            Call Now
+          <a href="tel:+919478566963">
+            +919478566963
           </a>
         </div>
       </header>
